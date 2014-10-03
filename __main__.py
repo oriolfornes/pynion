@@ -17,21 +17,23 @@ def options(*args, **kwds):
                                      formatter_class = argparse.ArgumentDefaultsHelpFormatter,
                                      description     = 'A library building helper')
 
-    parser.add_argument('-e', '--experiment',   dest     = "experiment",
+    parser.add_argument('-p', '--project',   dest     = "project",
                         action  = "store",      required = True,
-                        help    = "Experiment name")
+                        help    = "Project name")
 
     parser.add_argument('-c', '--config',       dest     = "configfile",
                         action  = "store",      required = False,
+                        default = None,
                         help    = "Add a configuration file " +
                                   "for external software")
     parser.add_argument('-d', '--date',         dest     = "date",
                         action  = "store",      required = False,
                         default = datetime.date.today(),
-                        help    = "Date of the experiment, as YYY-MM-DD")
+                        help    = "Date of the project, as YYY-MM-DD")
 
     options = parser.parse_args()
 
+    m.set_stdout()
     m.set_verbose()
 
     return options
@@ -41,17 +43,16 @@ if __name__ == "__main__":
 
     options = options()
 
-    m.info('Creating project: {0}'.format(options.experiment))
+    m.info('Creating project: {0}'.format(options.project))
 
     if isinstance(options.date, datetime.date):
-        m.experiment_date = options.date
+        m.project.set_date()
     else:
         date_regex = re.compile('(\d{4})\-(\d{2})\-(\d{2})')
         d = date_regex.search(options.date)
         if not d:
             m.exception('Experiment date wrongly formated')
-        m.set_experiment_date(d[1], d[2], d[3])
+        m.project.set_date(d[1], d[2], d[3])
 
-    m.experiment_name = options.experiment
-    m.set_experiment_configuration_file(options.configfile)
-    m.init_experiment()
+    m.project.set_configuration_file(options.configfile)
+    m.project.create(options.project, m.experiment.user)

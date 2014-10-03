@@ -8,22 +8,25 @@
 
 """
 import atexit
-import collections
+# import collections
 import datetime
 import inspect
-import json
+# import json
 import logging
 import os
-import pwd
-import re
-import socket
-import subprocess
+# import pwd
+# import re
+# import socket
+# import subprocess
 import sys
 import time
+import traceback
 import warnings
 
 from ..decorators import singleton
-from .process     import Process
+# from ._inner      import Process
+from ._inner      import Project
+from ._inner      import Experiment
 
 
 @singleton
@@ -47,18 +50,9 @@ class Manager(object):
         # IO conditions:
         self._overwrite = False  # Requires setter
 
-        # Experiment Conditions:
-        self.experiment_name   = None
-        self.experiment_user   = pwd.getpwuid(os.getuid())[0]
-        self.experiment_host   = socket.gethostname()
-        self.experiment_wdir   = os.getcwd()
-        self.experiment_date   = None
-        self.experiment_files  = set()
-        self.experiment_config = None
-        self.experiment_pipe   = None
-        self.experiment_start  = time.time()
-
-        self.retrieve_experiment()
+        # Project and Experiment:
+        self.project    = Project()
+        self.experiment = Experiment()
 
         # Create a logger.
         # Null handler is added so that if no handler is active
@@ -75,7 +69,6 @@ class Manager(object):
     # METHODS: SETTERS #
     ####################
     def set_verbose(self):
-        self.set_stdout()
         self._verbose = True
 
     def set_debug(self):
@@ -84,7 +77,7 @@ class Manager(object):
 
     def set_detail(self):
         self._detail = True
-        self.set_clean()
+        self.set_unclean()
         self.set_debug()
 
     def set_unclean(self):
@@ -113,34 +106,9 @@ class Manager(object):
         handler.setFormatter(self._FRMT)
         self._fd.addHandler(handler)
 
-    def set_experiment_date(self, year, month, day):
-        self.experiment_date = datetime.date(year, month, day)
-
-    def set_experiment_configuration_file(self, filename):
-        if filename is None:
-            return
-        self._experiment_config_file(filename)
-
-        self.info(['Linking experiment configuration file:',
-                   '{0}.'.format(self.experiment_config)])
-        if not os.path.isfile(self.experiment_config):
-            fd = open(self.experiment_config, 'w')
-            fd.close()
-
     ###########
     # METHODS #
     ###########
-    def experiment_summary(self):
-        today = datetime.date.today()
-        data  = ['# Experiment:',
-                 '# By: {0}'.format(self.experiment_user),
-                 '# At: {0}'.format(self.experiment_host),
-                 '# On: {0}'.format(today.isoformat())]
-        if self.experiment_date is not None:
-            expday = self.experiment_date
-            data.append('# TimeStamp: {0}'.format(expday.isoformat()))
-        self.info(data)
-
     def add_tempfile(self, tempfile):
         self._tempfiles.add(tempfile)
 
@@ -207,61 +175,8 @@ class Manager(object):
                 self._fd.exception(line)
             else:
                 sys.stderr.write(line + '\n')
+                traceback.print_tb(sys.exc_info()[2])
         os._exit(0)
-
-    ###############################
-    # METHODS: EXPERIMENT SUMMARY #
-    ###############################
-    def init_experiment(self):
-        self._experiment_pipeline_file()
-
-        data = collections.OrderedDict()
-        data['name']   = self.experiment_name
-        data['user']   = self.experiment_user
-        data['host']   = self.experiment_host
-        data['wdir']   = self.experiment_wdir
-        data['date']   = self.experiment_date.isoformat()
-        data['config'] = self.experiment_config
-        data['ppline'] = self.experiment_pipe
-
-        data = json.dumps(data, indent=4, separators=(',', ':'))
-
-        self.info(['Creating experiment properties file:',
-                   '{0}.'.format(self._experiment_log_file())])
-        fd = open(self._experiment_log_file(), 'w')
-        fd.write(data)
-        fd.close()
-        self.info(['Creating experiment pipeline file:',
-                   '{0}.'.format(self.experiment_pipe)])
-        if not os.path.isfile(self.experiment_pipe):
-            self.write_to_pipeline()
-
-    def retrieve_experiment(self):
-        if not os.path.isfile(self._experiment_log_file()):
-            return
-        fd   = open(self._experiment_log_file())
-        data = json.loads(''.join([x.strip() for x in fd.readlines()]))
-        fd.close()
-        self.experiment_name   = data['name']
-        self.experiment_wdir   = data['wdir']
-        data['date'] = datetime.datetime.strptime(data['date'], "%Y-%m-%d")
-        self.experiment_date   = data['date']
-        self.experiment_config = data['config']
-        self.experiment_pipe   = data['ppline']
-
-        self.write_to_pipeline()
-
-    def write_to_pipeline(self):
-        process = self._get_process()
-        fd = open(self.experiment_pipe, 'a')
-        fd.write('#user: {0}\n'.format(process.user))
-        for efile, eaction in self.experiment_files:
-            if eaction.startswith('r'):
-                fd.write('#read file: {0}\n'.format(efile))
-            if eaction.startswith('w'):
-                fd.write('#written file: {0}\n'.format(efile))
-        fd.write('{0}\n'.format(process.cmd))
-        fd.close()
 
     ####################
     # METHODS: AT EXIT #
@@ -272,38 +187,36 @@ class Manager(object):
                 if os.path.isfile(tfile):
                     os.unlink(tfile)
                     self.info('Temporary file {0} removed'.format(tfile))
-            for efile, eaction in self.experiment_files:
-                if os.path.isfile(efile) and os.path.getsize(efile) == 0:
-                    if eaction.startswith('w'):
-                        os.unlink(efile)
-                        self.info('Empty file {0} removed'.format(efile))
+            self.experiment.clean_empty_files()
         self._tempfiles = set()
 
     def shutdown(self):
-        experiment_end    = time.time()
-        experiment_length = experiment_end - self.experiment_start
-        experiment_length = str(datetime.timedelta(seconds=experiment_length))
-        experiment_length = 'Elapsed time: {0}'.format(experiment_length)
-        self._fd.info('[ SUCCESS!! ]: -- {0}'.format(experiment_length))
+        self.experiment.end = time.time()
+        self.experiment.calculate_length()
+
+        self._write_to_pipeline()
+
+        info = 'Elapsed time: {0}'.format(self.experiment.length)
+        self._fd.info('[ SUCCESS!! ]: -- {0}'.format(info))
         self._fd.info('[ SUCCESS!! ]: -- Program ended as expected.')
+
         logging.shutdown()
+
+    def _write_to_pipeline(self):
+        if self.project.is_active:
+            fd = open(self.project.pipeline_file, 'a')
+            fd.write(self.experiment.toJSON() + '\n')
+            fd.close()
 
     ###################
     # PRIVATE METHODS #
     ###################
-    def _experiment_log_file(self):
-        return os.path.join(self.experiment_wdir, '_info.exp-properties')
-
-    def _experiment_config_file(self, filename):
-        if not filename.endswith('.exp-config'):
-            filename += '.exp-config'
-        self.experiment_config = filename
-
-    def _experiment_pipeline_file(self):
-        self.experiment_pipe = '_info.exp-pipeline'
-
     def _caller(self, caller):
-        callerID = inspect.getmodule(caller).__name__
+        if inspect.getmodule(caller) is not None:
+            callerID = inspect.getmodule(caller).__name__
+        else:
+            callerID = 'Terminal'
+
         if callerID is '__main__':
             callerID = inspect.getmodule(caller).__file__
             callerID = os.path.split(os.path.split(callerID)[0])[-1]
@@ -315,15 +228,15 @@ class Manager(object):
         for line in mssg:
             yield self._MSSG.format(callerID, str(line))
 
-    def _get_process(self):
-        sub_proc = subprocess.Popen(['ps', 'aux'],
-                                    shell=False, stdout=subprocess.PIPE)
-        #Discard the first line (ps aux header)
-        sub_proc.stdout.readline()
-        pid = int(os.getpid())
-        for line in sub_proc.stdout:
-            #The separator for splitting is 'variable number of spaces'
-            proc_info = re.split(" *", line.strip())
-            p = Process(proc_info)
-            if p.pid == pid:
-                return p
+    # def _get_process(self):
+    #     sub_proc = subprocess.Popen(['ps', 'aux'],
+    #                                 shell=False, stdout=subprocess.PIPE)
+    #     #Discard the first line (ps aux header)
+    #     sub_proc.stdout.readline()
+    #     pid = int(os.getpid())
+    #     for line in sub_proc.stdout:
+    #         #The separator for splitting is 'variable number of spaces'
+    #         proc_info = re.split(" *", line.strip())
+    #         p = Process(proc_info)
+    #         if p.pid == pid:
+    #             return p

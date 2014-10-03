@@ -10,6 +10,7 @@
 import bz2
 import filecmp
 import gzip
+import json
 import os
 import zipfile
 
@@ -23,7 +24,8 @@ m = Manager()
 @multiton
 class File(object):
 
-    _IDENTIFIER      = 'post'
+    _IDENTIFIER      = 'name'
+    _DESCRIPTOR      = 'simplefile.File'
     EMPTY_ACTION     = frozenset(['n'])
     WRITE_ACTION     = frozenset(['w', 'a', 'ar', 'wb'])
     READ_ACTION      = frozenset(['r', 'rb', 'r|*', 'r|'])
@@ -31,7 +33,7 @@ class File(object):
 
     ACTIVE_EXTENSIONS = {'.gz': 'gzip', '.bz2': 'bzip', '.zip': 'zip'}
 
-    def __init__(self, name, action = 'r', overwrite = None):
+    def __init__(self, name, action = 'r', auto_open = True, overwrite = None):
 
         self.name = name
         m.info('Opening: {0}'.format(self.full))
@@ -56,9 +58,6 @@ class File(object):
 
         # Local overwrite takes precedence over Global overwrite
         self._overwrite = m.evaluate_overwrite(overwrite)
-        if not self._action.startswith('r'):
-            ostring = 'overwrite' if self._overwrite else 'not overwrite'
-            m.debug('\tMode set to {0}'.format(ostring))
 
         # Check that the requested action can be performed over that
         # particular file
@@ -79,7 +78,8 @@ class File(object):
         # Set some limitations
         self._limitations()
 
-        self.open()
+        if auto_open:
+            self.open()
 
     ##############
     # ATTRIBUTES #
@@ -166,6 +166,10 @@ class File(object):
         if self._is_open:
             return
 
+        if not self._action.startswith('r'):
+            ostring = 'overwrite' if self._overwrite else 'not overwrite'
+            m.debug('\tMode set to {0}'.format(ostring))
+
         self._is_open = True
         if self.is_regular_file:
             self._fd = open(self.full, self.action)
@@ -185,6 +189,12 @@ class File(object):
         self._work_action('r')
         return self._fd.readline()
 
+    def readJSON(self, encoding = 'utf-8'):
+        d = []
+        for l in self.read():
+            d.append(l.strip())
+        return json.loads(''.join(d), encoding=encoding)
+
     def write(self, line):
         self._work_action('w')
         self._fd.write(line)
@@ -198,6 +208,14 @@ class File(object):
     def close(self, clean = False):
         self._fd.close()
         self._is_open = False
+
+    def unregister(self):
+        i = None
+        for k in self.instances.keys():
+            if k._DESCRIPTOR == File._DESCRIPTOR:
+                i = k
+                break
+        del self.instances[i][getattr(self, self._IDENTIFIER)]
 
     def same_content(self, other):
         if isinstance(other, basestring):
@@ -253,7 +271,7 @@ class File(object):
                 raise errors.FileAccessError('write')
 
     def _register_file(self):
-        m.experiment_files.add((self.full, self.action))
+        m.experiment.files.add((self.full, self.action))
 
     def _limitations(self):
         if self._action in self.WRITE_ACTION:
