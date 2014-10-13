@@ -13,12 +13,12 @@ import json
 import os
 import shutil
 
-from ...decorators import singleton
-from .             import Experiment
+from .            import Experiment
+from ...metaclass import Singleton
 
 
-@singleton
 class Project(object):
+    __metaclass__ = Singleton
     _PROJECT_FILE  = '_info-project.json'
     _CONFIG_FILE   = '_config-project.json'
     _PIPELINE_FILE = Experiment._PIPELINE_FILE

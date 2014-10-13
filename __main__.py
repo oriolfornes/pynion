@@ -2,7 +2,7 @@ import argparse
 import datetime
 import re
 
-from .beans import Manager
+from . import Manager
 m = Manager()
 
 

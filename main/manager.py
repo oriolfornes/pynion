@@ -8,29 +8,23 @@
 
 """
 import atexit
-# import collections
 import datetime
 import inspect
-# import json
 import logging
 import os
-# import pwd
-# import re
-# import socket
-# import subprocess
 import sys
 import time
 import traceback
 import warnings
 
-from ..decorators import singleton
-# from ._inner      import Process
+from ..metaclass  import Singleton
 from ._inner      import Project
 from ._inner      import Experiment
 
 
-@singleton
 class Manager(object):
+
+    __metaclass__ = Singleton
 
     _GENERAL_FORMAT = '%(asctime)s - %(levelname)-7.7s - %(message)s'
     _TIME_FORMAT    = '%Y-%m-%d %H:%M'
@@ -52,7 +46,11 @@ class Manager(object):
 
         # Project and Experiment:
         self.project    = Project()
-        self.experiment = Experiment()
+        try:
+            self.experiment = Experiment()
+        except:
+            self.exception(['Bash command could not be imported.',
+                            'System needs to be UNIX based'])
 
         # Create a logger.
         # Null handler is added so that if no handler is active
@@ -109,8 +107,12 @@ class Manager(object):
     ###########
     # METHODS #
     ###########
-    def add_tempfile(self, tempfile):
+    def add_temporary_file(self, tempfile):
+        self.info('Registering temporary file {0}'.format(tempfile))
         self._tempfiles.add(tempfile)
+
+    def add_experiment_file(self, filename, action):
+        self.experiment.add_file(filename, action)
 
     def countdown(self, max_time):
         t  = str(datetime.timedelta(seconds=max_time))
@@ -186,17 +188,18 @@ class Manager(object):
             for tfile in self._tempfiles:
                 if os.path.isfile(tfile):
                     os.unlink(tfile)
-                    self.info('Temporary file {0} removed'.format(tfile))
-            self.experiment.clean_empty_files()
+                    self.info('Temporary file {0} removed.'.format(tfile))
+            for efile in self.experiment.clean_empty_files():
+                self.info('Empty file {0} removed.'.format(efile))
         self._tempfiles = set()
 
     def shutdown(self):
         self.experiment.end = time.time()
-        self.experiment.calculate_length()
+        self.experiment.calculate_duration()
 
         self._write_to_pipeline()
 
-        info = 'Elapsed time: {0}'.format(self.experiment.length)
+        info = 'Elapsed time: {0}'.format(self.experiment.duration)
         self._fd.info('[ SUCCESS!! ]: -- {0}'.format(info))
         self._fd.info('[ SUCCESS!! ]: -- Program ended as expected.')
 
@@ -205,7 +208,7 @@ class Manager(object):
     def _write_to_pipeline(self):
         if self.project.is_active:
             fd = open(self.project.pipeline_file, 'a')
-            fd.write(self.experiment.toJSON() + '\n')
+            fd.write(self.experiment.to_json() + '\n')
             fd.close()
 
     ###################
@@ -227,16 +230,3 @@ class Manager(object):
             mssg = [mssg, ]
         for line in mssg:
             yield self._MSSG.format(callerID, str(line))
-
-    # def _get_process(self):
-    #     sub_proc = subprocess.Popen(['ps', 'aux'],
-    #                                 shell=False, stdout=subprocess.PIPE)
-    #     #Discard the first line (ps aux header)
-    #     sub_proc.stdout.readline()
-    #     pid = int(os.getpid())
-    #     for line in sub_proc.stdout:
-    #         #The separator for splitting is 'variable number of spaces'
-    #         proc_info = re.split(" *", line.strip())
-    #         p = Process(proc_info)
-    #         if p.pid == pid:
-    #             return p
