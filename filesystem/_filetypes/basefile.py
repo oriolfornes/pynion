@@ -141,7 +141,7 @@ class BaseFile(object):
             raise FWR(self.full, self.action)
 
     #################
-    # CLASS METHODS #
+    # MAGIC METHODS #
     #################
     def __str__(self):
         return self.full

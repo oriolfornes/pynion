@@ -10,6 +10,7 @@
 @class: JSONer
 '''
 from abc import ABCMeta
+import json
 
 import jsonpickle
 
@@ -30,6 +31,9 @@ class JSONer(object):
             np_readable.status = readable
             np_readable.api    = api
         return jsonpickle.encode(self, unpicklable=unpicklable)
+
+    def to_dict(self, unpicklable = True, readable = False, api = False):
+        return json.loads(self.to_json(unpicklable, readable, api))
 
     @staticmethod
     def from_json(json_data):

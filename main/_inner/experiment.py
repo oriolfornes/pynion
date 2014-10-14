@@ -23,7 +23,6 @@ from .  import Process
 
 
 class Experiment(JSONer):
-    _PIPELINE_FILE = '_pipeline-project.json'
 
     def __init__(self):
         self.pyversion = platform.python_version()

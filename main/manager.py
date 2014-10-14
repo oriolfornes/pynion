@@ -8,8 +8,10 @@
 
 """
 import atexit
+import ConfigParser
 import datetime
 import inspect
+import json
 import logging
 import os
 import sys
@@ -44,20 +46,21 @@ class Manager(object):
         # IO conditions:
         self._overwrite = False  # Requires setter
 
-        # Project and Experiment:
-        self.project    = Project()
-        try:
-            self.experiment = Experiment()
-        except:
-            self.exception(['Bash command could not be imported.',
-                            'System needs to be UNIX based'])
-
         # Create a logger.
         # Null handler is added so that if no handler is active
         # warnings and errors will not display a 'handler not found' message
         self._fd = logging.getLogger(__name__)
         self._fd.setLevel(logging.DEBUG)
         self._fd.addHandler(logging.NullHandler())
+
+        # Project and Experiment
+        rfname, cfname, pfname = self._configuration()
+        self.project = Project(rfname, cfname, pfname)
+        try:
+            self.experiment = Experiment()
+        except:
+            self.exception(['Bash command could not be imported.',
+                            'System needs to be UNIX based'])
 
         # Register function to execute at exit
         atexit.register(self.shutdown)
@@ -205,12 +208,6 @@ class Manager(object):
 
         logging.shutdown()
 
-    def _write_to_pipeline(self):
-        if self.project.is_active:
-            fd = open(self.project.pipeline_file, 'a')
-            fd.write(self.experiment.to_json() + '\n')
-            fd.close()
-
     ###################
     # PRIVATE METHODS #
     ###################
@@ -230,3 +227,44 @@ class Manager(object):
             mssg = [mssg, ]
         for line in mssg:
             yield self._MSSG.format(callerID, str(line))
+
+    def _write_to_pipeline(self):
+        if self.project.is_active:
+            data = []
+            with open(self.project.pipeline_file, 'r') as line:
+                l = line.read().strip()
+                if len(l) > 0:
+                    data = json.loads(l)
+            data.append(self.experiment.to_dict())
+            with open(self.project.pipeline_file, 'w') as fd:
+                fd.write(json.dumps(data))
+
+    def _configuration(self):
+        dfile   = '../config/default.settings'
+        ufile   = '../config/user.settings'
+        default = os.path.join(os.path.dirname(__file__), dfile)
+        default = os.path.normpath(default)
+        user    = os.path.join(os.path.dirname(__file__), ufile)
+        user    = os.path.normpath(user)
+        user    = os.getenv('LIBRARIAN_CONFIG_PY', user)
+
+        parse  = ConfigParser.RawConfigParser(allow_no_value=True)
+        parse.readfp(open(default))
+        parse.read(user)
+
+        manager_opt = ['stdout',    'verbose',
+                       'debug',     'detail',
+                       'overwrite', 'unclean']
+
+        for opt in manager_opt:
+            func = getattr(self, 'set_' + opt)
+            if parse.getboolean('manager', opt):
+                self.info('Setting up {0} mode'.format(opt))
+                func()
+        if parse.get('manager', 'logfile') is not None \
+           and parse.get('manager', 'logfile') != '':
+            self.set_logfile(parse.get('manager', 'logfile'))
+
+        return [parse.get('project', 'name'),
+                parse.get('project', 'config'),
+                parse.get('project', 'pipeline')]

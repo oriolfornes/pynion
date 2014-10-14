@@ -13,17 +13,13 @@ import json
 import os
 import shutil
 
-from .            import Experiment
 from ...metaclass import Singleton
 
 
 class Project(object):
-    __metaclass__ = Singleton
-    _PROJECT_FILE  = '_info-project.json'
-    _CONFIG_FILE   = '_config-project.json'
-    _PIPELINE_FILE = Experiment._PIPELINE_FILE
+    __metaclass__  = Singleton
 
-    def __init__(self):
+    def __init__(self, project_file, config_file, pipeline_file):
         # Default Project Conditions:
         self.name           = None
         self.author         = None
@@ -36,17 +32,23 @@ class Project(object):
 
         self._configfile    = None
 
+        self._project_file  = project_file
+        self._config_file   = config_file
+        self._pipeline_file = pipeline_file
+
+        self._reactivate()
+
     @property
     def project_file(self):
-        return os.path.join(self.working_dir, self._PROJECT_FILE)
+        return os.path.join(self.working_dir, self._project_file)
 
     @property
     def configuration_file(self):
-        return os.path.join(self.working_dir, self._CONFIG_FILE)
+        return os.path.join(self.working_dir, self._config_file)
 
     @property
     def pipeline_file(self):
-        return os.path.join(self.working_dir, self._PIPELINE_FILE)
+        return os.path.join(self.working_dir, self._pipeline_file)
 
     ####################
     # METHODS: SETTERS #
