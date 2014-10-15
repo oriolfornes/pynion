@@ -17,6 +17,8 @@ __pycache__
 # Python pyc files #
 ####################
 *.pyc
-
+*egg-info/
+dist/
+build/
 test/
 docs/build/
