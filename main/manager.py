@@ -246,7 +246,7 @@ class Manager(object):
         default = os.path.normpath(default)
         user    = os.path.join(os.path.dirname(__file__), ufile)
         user    = os.path.normpath(user)
-        user    = os.getenv('LIBRARIAN_CONFIG_PY', user)
+        user    = os.getenv('PYNION_CONFIG_PY', user)
 
         parse  = ConfigParser.RawConfigParser(allow_no_value=True)
         parse.readfp(open(default))

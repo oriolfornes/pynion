@@ -1,7 +1,7 @@
-Welcome to Librarian's documentation!
-=====================================
+Welcome to Pynion, the python minion library!
+=============================================
 
-.. automodule:: librarian
+.. automodule:: pynion
 
 Contents:
 

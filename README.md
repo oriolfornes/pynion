@@ -1,4 +1,4 @@
-Librarian
+Pynion
 =========
 
-A small library to build libraries.
+A small minion library to build libraries.

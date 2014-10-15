@@ -13,9 +13,9 @@ def options(*args, **kwds):
 
     @return: {Namespace}
     '''
-    parser = argparse.ArgumentParser(prog            = 'librarian',
+    parser = argparse.ArgumentParser(prog            = 'pynion',
                                      formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-                                     description     = 'A library building helper')
+                                     description     = 'A library building minion')
 
     parser.add_argument('-p', '--project',   dest     = "project",
                         action  = "store",      required = True,
