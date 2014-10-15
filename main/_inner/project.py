@@ -146,15 +146,4 @@ class Project(object):
     def _reactivate(self):
         if not os.path.isfile(self.project_file):
             return
-        fd   = open(self.project_file)
-        data = json.loads(''.join([x.strip() for x in fd.readlines()]))
-        fd.close()
-        data['date'] = datetime.datetime.strptime(data['date'], "%Y-%m-%d")
-
-        self.name        = data['name']
-        self.author      = data['author']
-        self.date        = data['date']
-        self.description = data['description']
-        self.citation    = data['citation']
-
         self.is_active = True
