@@ -25,7 +25,10 @@ from ._inner      import Experiment
 
 
 class Manager(object):
+    """The Manager class is a :py:class:`Singleton <pynion.Singleton>` that crosses
+    through the entire library. It is the main controller of the user's preferences.
 
+    """
     __metaclass__ = Singleton
 
     _GENERAL_FORMAT = '%(asctime)s - %(levelname)-7.7s - %(message)s'

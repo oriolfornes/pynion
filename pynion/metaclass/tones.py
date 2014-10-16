@@ -2,6 +2,21 @@ from ..errors.mtce import BadMultitonIdentifier as BMI
 
 
 class Singleton(type):
+    """The **singleton pattern** is a design pattern that restricts the
+    instantiation of a class to one object. This is useful when exactly one
+    object is needed to coordinate actions across the system.
+
+    As a metaclass, the pattern is applied to derived classes such as
+    ::
+        from pynion import Singleton
+
+        class Foo(object):
+            __metaclass__ = Singleton
+
+            def __init__(self, bar):
+                self.bar = bar
+
+    """
     instance = {}
 
     def __call__(cls, *args, **kw):
@@ -11,6 +26,30 @@ class Singleton(type):
 
 
 class Multiton(type):
+    """The **multiton pattern** is a design pattern similar to the singleton.
+    The multiton pattern expands on the singleton concept to manage a map of
+    named instances as key-value pairs. This means that rather than having a
+    single instance per application the multiton pattern instead ensures a
+    single instance per key.
+
+    As a metaclass, the pattern is applied to derived classes through the
+    :py:attr:`__metaclass__`. By default, the key attribute of the multiton is
+    either:
+        * the :py:meth:`__init__` parameter *name* or
+        * the first argument of :py:meth:`__init__`
+
+    The default named argument can be changed by adding the class attribute
+    :py:attr:`_IDENTIFIER`
+    ::
+        from pynion import Multiton
+
+        class Foo(object):
+            __metaclass__ = Multiton
+            _IDENTIFIER   = 'newID'
+
+            def __init__(self, newID):
+                self.id = newID
+    """
     instance = {}
 
     def __call__(cls, *args, **kw):
