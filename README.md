@@ -10,4 +10,4 @@ Amongst others, it manages:
     *  *Overwrite control*  
     *  *Clean up of temporal and empty files*  
 
-Find more about how to use the library in the [https://pynion.readthedocs.org/en/latest/](https://pynion.readthedocs.org/en/latest/).
+Find more about how to use the library in the [documentation](https://pynion.readthedocs.org/en/latest/).
