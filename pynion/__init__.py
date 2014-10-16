@@ -1,7 +1,7 @@
 """**Pynion** is a small python minion library that provides two key features to
 help both developers and python users alike:
 
-* For **developers**, it provides a series of classes designed to help progress logging as well as in the control of I/O processes.
+* For **developers**, it provides a series of classes designed to help logging as well as in the control of I/O processes.
 
 * For **users**, it provides a system to build a project's pipeline by tracking multiple python executions.
 

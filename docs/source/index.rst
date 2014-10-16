@@ -1,13 +1,19 @@
-Welcome to Pynion, the python minion library!
-=============================================
+Pynion, the python minion library.
+==================================
+.. toctree::
+   :hidden:
 
 .. automodule:: pynion
 
-Contents:
+
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
 
+   quickstart
+   api
 
 
 Indices and tables
