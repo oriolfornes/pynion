@@ -28,3 +28,14 @@ Multiton
 .. autoclass:: pynion.Multiton
    :members:
    :special-members:
+
+
+Abstractclasses
+---------------
+
+JSONer
+++++++
+
+.. autoclass:: pynion.JSONer
+   :members: to_json, to_dict, from_json
+   :special-members:

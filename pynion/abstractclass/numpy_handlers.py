@@ -29,6 +29,7 @@ class BaseHandler(jsonpickle.handlers.BaseHandler):
 
 
 class NumpyNumber(BaseHandler):
+    """A jsonpickle handler for numpy floats."""
     def flatten(self, obj, data):
         data["__reduce__"] = (self.nflatten(type(obj)), [float(obj)])
         if not np_readable.api:
@@ -69,6 +70,7 @@ class NumpyArrayHandler(BaseHandler):
 
 
 class NumpyMatrixHandler(NumpyArrayHandler):
+    """A jsonpickle handler for numpy matrix."""
     def restore(self, obj):
         mtrx = super(NumpyMatrixHandler, self).restore(obj)
         return np.matrix(mtrx)

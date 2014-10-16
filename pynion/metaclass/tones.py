@@ -16,6 +16,9 @@ class Singleton(type):
             def __init__(self, bar):
                 self.bar = bar
 
+    Derived classes can become parents of other classes. Classes inherited from
+    a ``__metaclass__ = Singleton`` are also Singleton.
+
     """
     instance = {}
 
@@ -35,20 +38,24 @@ class Multiton(type):
     As a metaclass, the pattern is applied to derived classes through the
     :py:attr:`__metaclass__`. By default, the key attribute of the multiton is
     either:
-        * the :py:meth:`__init__` parameter *name* or
-        * the first argument of :py:meth:`__init__`
+        * the :py:meth:`__init__` named argument **name** or
+        * the first argument of :py:meth:`__init__` if not named.
 
     The default named argument can be changed by adding the class attribute
-    :py:attr:`_IDENTIFIER`
+    :py:const:`_IDENTIFIER`
     ::
         from pynion import Multiton
 
         class Foo(object):
             __metaclass__ = Multiton
-            _IDENTIFIER   = 'newID'
+            _IDENTIFIER   = 'newID'  # by default this will be 'name'
 
             def __init__(self, newID):
                 self.id = newID
+
+    Derived classes can become parents of other classes. Classes inherited from
+    a ``__metaclass__ = Multiton`` are also Multiton, although their
+    :py:const:`_IDENTIFIER` can be changed.
     """
     instance = {}
 
