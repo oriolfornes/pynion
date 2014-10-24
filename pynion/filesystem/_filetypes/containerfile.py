@@ -12,6 +12,8 @@ class ContainerFile(BaseFile):
     The **CompressedFile** :py:class:`pynion.Multiton` is a file management object
     created directly through the py:class:`pynion.File` factory.
 
+    Extends :py:class:`pynion.filesystem._filetypes.BaseFile`
+
     It specifically manages compacted or compressed files with multiple files
     within.
 

@@ -9,6 +9,8 @@ class CompressedFile(BaseFile):
     The **CompressedFile** :py:class:`pynion.Multiton` is a file management object
     created directly through the py:class:`pynion.File` factory.
 
+    Extends :py:class:`pynion.filesystem._filetypes.BaseFile`
+
     It specifically manages compressed files.
 
     """
