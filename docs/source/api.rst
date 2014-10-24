@@ -8,34 +8,72 @@ Manager
 +++++++
 
 .. autoclass:: pynion.Manager
-   :members: set_verbose, set_debug, set_detail, set_unclean, set_stdout, set_overwrite, set_logfile
-   :special-members:
+   :members:
+
+
+File
+++++
+
+.. autoclass:: pynion.File
+   :members:
+
+
+BaseFile
+^^^^^^^^
+
+.. autoclass:: pynion.filesystem._filetypes.BaseFile
+   :members:
+
+CompressedFile
+^^^^^^^^^^^^^^
+
+.. autoclass:: pynion.filesystem._filetypes.CompressedFile
+   :members:
+
+ContainerFile
+^^^^^^^^^^^^^
+
+.. autoclass:: pynion.filesystem._filetypes.ContainerFile
+   :members:
+
+Path
+++++
+
+.. autoclass:: pynion.Path
+   :members:
+
+Executable
+++++++++++
+
+.. autoclass:: pynion.Executable
+   :members:
 
 
 Metaclasses
 -----------
 
-Singleon
-++++++++
+.. automodule:: pynion.metaclass
+
+Singleton
++++++++++
 
 .. autoclass:: pynion.Singleton
    :members:
-   :special-members:
 
 Multiton
 ++++++++
 
 .. autoclass:: pynion.Multiton
    :members:
-   :special-members:
 
 
 Abstractclasses
 ---------------
+
+.. automodule:: pynion.abstractclass
 
 JSONer
 ++++++
 
 .. autoclass:: pynion.JSONer
    :members: to_json, to_dict, from_json
-   :special-members:

@@ -1,3 +1,4 @@
-__all__ = ["Manager"]
+__all__ = ["Manager", "Executable"]
 
-from .manager  import Manager
+from .manager    import Manager
+from .executable import Executable

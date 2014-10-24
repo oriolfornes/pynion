@@ -37,6 +37,54 @@ class Manager(object):
     _MSSG           = '[ {0} ] - {1}'
 
     def __init__(self):
+        """.. py:method:: __init__()
+
+        The class is instantiated at some point during the load of the library's
+        code. Thus, no parameters are passed to it. As any new instantiation will
+        only call the initial instance, parameters cannot be passed afterward.
+
+        Although any attribute can be accessed through its given *setter*, default
+        values can be assigned to the first initialization of **Manager** through
+        a configuration file. The configuration file should have the following
+        parameters:
+
+        .. literalinclude:: /../../pynion/config/default.settings
+
+        The user's configuration file must then be linked to a system variable
+        named ``PYNION_CONFIG_PY``. Thus, the configuration file can be setted
+        globally for all executions directly from bash, ::
+
+            export PYNION_CONFIG_PY=user.settings
+
+        Or specifically to a script by ::
+
+            import os
+            os.environ["PYNION_CONFIG_PY"] = 'user.settings'
+
+        **BEFORE** importing the **Pynion** library.
+
+        Regarding the different execution parameters in the configuration file:
+
+        :param bool stdout: Create a :py:class:`logging.StreamHandler` for standard
+            output.
+        :param bool verbose: Activate level *verbose* of logging report.
+        :param bool debug: Activate level *debug* of logging report. It also
+            forces the activation of *verbose*.
+        :param bool detail: Activate level *detail* of logging report. It also
+            forces the activation of *debug*, *verbose* and *unclean*.
+        :param bool overwrite: When :py:data:`True`, allows overwriting existing files.
+        :param bool unclean: When :py:data:`True`, avoids the deletion of
+            temporary and empty files at the end of the execution.
+        :param bool logfile: When defined, it creates a
+            :py:class:`logging.StreamHandler` to a file with the provided name.
+            If ``logfile = default`` or a directory, it creates a logfile with
+            a predefined name that includes the name of the execution and the
+            pid of the process.
+
+        Regarding the project parameters in the configuration file:
+        **(TODO)**
+
+        """
         # Logger parameters: Level of detail
         self._verbose = False  # Requires setter
         self._debug   = False  # Requires setter
@@ -73,30 +121,46 @@ class Manager(object):
     # METHODS: SETTERS #
     ####################
     def set_verbose(self):
+        """Activate level *verbose* of logging report"""
         self._verbose = True
 
     def set_debug(self):
+        """Activate level *debug* of logging report. It also forces the
+        activation of *verbose*."""
         self.set_verbose()
         self._debug  = True
 
     def set_detail(self):
+        """Activate level *detail* of logging report. It also forces the
+        activation of *debug*, *verbose* and *unclean*."""
         self._detail = True
         self.set_unclean()
         self.set_debug()
 
     def set_unclean(self):
+        """Avoids the deletion of temporary and empty
+        files at the end of the execution."""
         self._clean = False
 
     def set_stdout(self):
+        """Create a :py:class:`logging.StreamHandler` for standard output."""
         handler = logging.StreamHandler()
         handler.setFormatter(self._FRMT)
         self._fd.addHandler(handler)
         self.info('Active STDOUT')
 
     def set_overwrite(self):
+        """Allows overwriting existing files."""
         self._overwrite = True
 
     def set_logfile(self, logname = os.getcwd()):
+        """Creates a :py:class:`logging.StreamHandler` to a file.
+
+        :param str logname: Name of the output logging file. If logname is a
+            directory, it will create a logging file in that directory named by
+            the name of the execution and its pid. Default value is current
+            working directory.
+        """
         if os.path.isdir(logname):
             script_name = os.path.split(os.path.splitext(sys.argv[0])[0])[1]
             if script_name == '__main__':
@@ -114,13 +178,26 @@ class Manager(object):
     # METHODS #
     ###########
     def add_temporary_file(self, tempfile):
+        """Register a new temporary file.
+
+        :param str tempfile: Name of the temporary file.
+        """
         self.info('Registering temporary file {0}'.format(tempfile))
         self._tempfiles.add(tempfile)
 
     def add_experiment_file(self, filename, action):
+        """Register a new experiment file.
+
+        :param str filename: Name of the experiment file.
+        :param str action: Open mode of the registered file ('r', 'w', 'a')
+        """
         self.experiment.add_file(filename, action)
 
     def countdown(self, max_time):
+        """Generate a STDERR printed countdown when needed to wait for something.
+
+        :param int max_time: Time to wait, in seconds.
+        """
         t  = str(datetime.timedelta(seconds=max_time))
         n  = time.localtime()
         s1 = 'Waiting for: {0} hours'.format(t)
@@ -141,12 +218,24 @@ class Manager(object):
                 sys.stderr.write('\n')
 
     def evaluate_overwrite(self, overwrite):
+        """Given a overwrite command, it evaluates it with the global
+        overwrite configuration.
+
+        :param bool overwrite: Particular overwrite status.
+        :return: Final overwrite status
+        :rtype: bool
+        """
         return self._overwrite if overwrite is None else overwrite
 
     ####################
     # METHODS: LOGGING #
     ####################
     def info(self, mssg):
+        """Print *verbose* level information.
+
+        :param str mssg: Message to relay through logging. If it is :py:data:`list`,
+            each position is treated as a new line.
+        """
         if not self._verbose:
             return
         callerID = self._caller(inspect.stack()[1][0])
@@ -154,6 +243,11 @@ class Manager(object):
             self._fd.info(line)
 
     def debug(self, mssg):
+        """Print *debug* level information.
+
+        :param str mssg: Message to relay through logging. If it is :py:data:`list`,
+            each position is treated as a new line.
+        """
         if not self._debug:
             return
         callerID = self._caller(inspect.stack()[1][0])
@@ -161,6 +255,11 @@ class Manager(object):
             self._fd.debug(line)
 
     def detail(self, mssg):
+        """Print *detail* level information.
+
+        :param str mssg: Message to relay through logging. If it is :py:data:`list`,
+            each position is treated as a new line.
+        """
         if not self._detail:
             return
         callerID = self._caller(inspect.stack()[1][0])
@@ -168,6 +267,11 @@ class Manager(object):
             self._fd.debug(line)
 
     def warning(self, mssg):
+        """Print *warning*.
+
+        :param str mssg: Message to relay through logging. If it is :py:data:`list`,
+            each position is treated as a new line.
+        """
         callerID = self._caller(inspect.stack()[1][0])
         for line in self._message_to_array(callerID, mssg):
             # If we have no handler added, we warn through the warnings module
@@ -177,6 +281,11 @@ class Manager(object):
                 warnings.warn(line + '\n')
 
     def exception(self, mssg):
+        """Print *exceptions* and quit.
+
+        :param str mssg: Message to relay through logging. If it is :py:data:`list`,
+            each position is treated as a new line.
+        """
         callerID = self._caller(inspect.stack()[1][0])
         for line in self._message_to_array(callerID, mssg):
             if len(self._fd.handlers) > 1:
@@ -264,9 +373,12 @@ class Manager(object):
             if parse.getboolean('manager', opt):
                 self.info('Setting up {0} mode'.format(opt))
                 func()
-        if parse.get('manager', 'logfile') is not None \
-           and parse.get('manager', 'logfile') != '':
-            self.set_logfile(parse.get('manager', 'logfile'))
+        logfile = parse.get('manager', 'logfile')
+        if logfile is not None and logfile != '':
+            if logfile.lower() == 'default':
+                self.set_logfile()
+            else:
+                self.set_logfile(logfile)
 
         return [parse.get('project', 'name'),
                 parse.get('project', 'config'),

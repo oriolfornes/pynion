@@ -7,7 +7,9 @@ class Singleton(type):
     object is needed to coordinate actions across the system.
 
     As a metaclass, the pattern is applied to derived classes such as
+
     ::
+
         from pynion import Singleton
 
         class Foo(object):
@@ -38,12 +40,15 @@ class Multiton(type):
     As a metaclass, the pattern is applied to derived classes through the
     :py:attr:`__metaclass__`. By default, the key attribute of the multiton is
     either:
+
         * the :py:meth:`__init__` named argument **name** or
         * the first argument of :py:meth:`__init__` if not named.
 
     The default named argument can be changed by adding the class attribute
     :py:const:`_IDENTIFIER`
+
     ::
+
         from pynion import Multiton
 
         class Foo(object):

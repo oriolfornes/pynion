@@ -17,6 +17,38 @@ m = Manager()
 
 
 class File(object):
+    """
+    The **File** object is a *factory object pattern* that creates either a
+    :py:class:`pynion.filesystem._filetypes.BaseFile`, a
+    :py:class:`pynion.filesystem._filetypes.CompressedFile` or a
+    :py:class:`pynion.filesystem._filetypes.ContainerFile`.
+
+    :param str file_name: Name of the file.
+    :param str action: Action to perform to the file ('r', 'w', 'a', 't').
+    :param bool overwrite: Specific overwrite policy over the file. By default,
+        it uses the value of :py:class:`pynion.Manager` :py:data:`overwrite`.
+    :param bool temp: Register the file as a temporary file, which means that it
+        will be erased at the end of the execution unless
+        :py:class:`pynion.Manager` :py:data:`clean` is set to :py:data:`False`.
+    :param str pattern: A pattern to match sections of the file name to attributes
+        in the generated object.
+    :raise: :py:class:`pynion.errors.ffe.FileAccessError` if asked for a
+        file without the right user permissions.
+    :raise: :py:class:`pynion.errors.ffe.FileDirNotExistError` if asked to write
+        a file in a directory that does not exist.
+    :raise: :py:class:`pynion.errors.ffe.FileIsDirError` if path is a directory.
+    :raise: :py:class:`pynion.errors.ffe.FileNotExistsError` if asked to read
+        a files that does not exists.
+    :raise: :py:class:`pynion.errors.ffe.FileOverwriteError` if asked to write
+        a file that already exist and own :py:data:`overwrite` or
+        :py:class:`pynion.Manager` :py:data:`overwrite` are :py:data:`False`.
+    :raise: :py:class:`pynion.errors.ffe.FileWrongActionError` when asked for an
+        unknown action.
+    :raise: :py:class:`pynion.errors.ffe.FileWrongPatternIDError` if names in the
+        pattern match names of attributes that exist in the returned class.
+    :raise: :py:class:`pynion.errors.ffe.FileWrongPatternFormatError` if the given
+        pattern cannot be matched to the file name.
+    """
 
     ACTIONS    = frozenset(['r', 'w', 'a', 't'])
     COMPRESSED = {'.gz':   'gzip',    '.bz2':     'bzip'}

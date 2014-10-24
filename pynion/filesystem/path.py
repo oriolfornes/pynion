@@ -9,11 +9,22 @@ m = Manager()
 
 
 class Path(object):
+    """
+    The **Path** :py:class:`pynion.Multiton` is an extension (not an actual inheritance) from the
+    :py:class:`pathlib.Path`.
+
+    """
     __metaclass__ = Multiton
 
     _IDENTIFIER   = 'name'
 
     def __init__(self, name):
+        """.. py:method:: __init__(name)
+
+        :param str name: name of the directory.
+        :raise: :py:class:`pynion.errors.pe.PathIsFile` if the given name is
+            a file.
+        """
         self.dname = pathlib.Path(name)
         if self.dname.is_file():
             raise PIF(self.full)
@@ -23,27 +34,55 @@ class Path(object):
     ##############
     @property
     def full(self):
+        """
+        :return: Full path of the directory
+        :rtype: str
+        """
         return str(self.dname.resolve())
 
     @property
     def parent(self):
+        """
+        :return: Name of parent directory
+        :rtype: str
+        """
         return str(self.dname.resolve().parent)
 
     @property
     def parents(self):
+        """
+        :return: Name of all parent directories
+        :rtype: list
+        """
         return self.dname.resolve().parents
 
     @property
     def name(self):
+        """
+        :return: Name of the directory
+        :rtype: str
+        """
         return str(self.dname.name)
 
     ###########
     # METHODS #
     ###########
     def relative_to(self, path = pathlib.Path.cwd()):
+        """
+        :param str path: Path to which the relative path is required.
+
+        :return: Actual path relative to the query path
+        :rtype: str
+        """
         return self.dname.relative_to(path)
 
     def mkdir(self):
+        """
+        Create the directory of the path.
+
+        Command is ignored if the directory already exists. Required parent
+        directories are also created.
+        """
         if self.dname.is_dir():
             m.warning('The directory {0} already exists.'.format(self.full))
         else:
@@ -51,6 +90,14 @@ class Path(object):
             self.dname.mkdir(parents = True)
 
     def list_directories(self, rootless = False):
+        """
+        List all the directories inside the requested path.
+
+        :param bool rootless: When :py:data:`True`, the directories are returned
+            relative to the path. Full path otherwise.
+
+        :rtype: iterator
+        """
         def list_dir(path):
             for x in path.iterdir():
                 if x.is_dir():
@@ -63,7 +110,16 @@ class Path(object):
 
     def list_files(self, pattern     = '*',
                    avoid_empty_files = True, rootless = False):
+        """
+        List all the files inside the requested path.
 
+        :param str pattern: Pattern to match the files (bash ls format).
+        :param bool avoid_empty_files: When :py:data:`True`, empty files are omitted.
+        :param bool rootless: When :py:data:`True`, the files are returned
+            relative to the path. Full path otherwise.
+
+        :rtype: iterator
+        """
         search_patterns = []
         if not isinstance(pattern, list):
             search_patterns.append(pattern)
@@ -79,12 +135,30 @@ class Path(object):
                     yield self._rootless(x, rootless)
 
     def do_files_match(self, pattern = '*', avoid_empty_files = True):
+        """
+        Search if files inside the directory match a given pattern.
+
+        :param str pattern: Pattern to match the files (bash ls format).
+        :param bool avoid_empty_files: When :py:data:`True`, empty files are omitted.
+        :rtype: bool
+        """
         for x in self.list_files(pattern = pattern,
                                  avoid_empty_files = avoid_empty_files):
             return True
         return False
 
     def compare_to(self, other, by_dir = True, by_file = False, as_string = False):
+        """
+        Compare the directory to another path.
+
+        :param str other: Path to compare to.
+        :param bool by_dir: Comparison by directories.
+        :param bool by_file: Comparison by file. If :py:data:`True`, overrides
+            *by_dir*.
+        :param bool as_string: Formats the returned dict as a string.
+
+        :rtype: dict
+        """
         other, by_dir = self._prepare_comparisson(other, by_file)
 
         content = {self.full: [], other.full: []}
@@ -124,6 +198,14 @@ class Path(object):
             return '\n'.join(data)
 
     def sync_to(self, other, by_dir = True, by_file = False):
+        """
+        Sync from directory to another path.
+
+        :param str other: Path to sync with.
+        :param bool by_dir: Sync by directories.
+        :param bool by_file: Sync by file. If :py:data:`True`, overrides
+            *by_dir*.
+        """
         other, by_dir = self._prepare_comparisson(other, by_file)
 
         diff = self.compare_to(other, by_dir, by_file)
@@ -134,6 +216,14 @@ class Path(object):
                 Path._copy(source, destination, by_file)
 
     def sync_from(self, other, by_dir = True, by_file = False):
+        """
+        Sync from another path to the directory.
+
+        :param str other: Path to sync with.
+        :param bool by_dir: Sync by directories.
+        :param bool by_file: Sync by file. If :py:data:`True`, overrides
+            *by_dir*.
+        """
         other, by_dir = self._prepare_comparisson(other, by_file)
 
         diff = self.compare_to(other, by_dir, by_file)
