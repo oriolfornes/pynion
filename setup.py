@@ -12,6 +12,7 @@ setup(
     version='0.0.1',
 
     description='Python Minion Library',
+    long_description=(open('README.md').read()),
 
     # The project's main homepage.
     url='https://bitbucket.org/jaumebonet/pynion',
@@ -42,11 +43,13 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
 
+    platform='UNIX',
     keywords='development',
 
     install_requires=['pathlib', 'jsonpickle'],
 
     packages=find_packages(exclude=['docs', 'test']),
+    # packages=['pynion'],
 
     package_data={
         'pynion': ['config/*'],

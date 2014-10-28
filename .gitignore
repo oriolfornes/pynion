@@ -14,6 +14,10 @@ __pycache__
 #################
 *.sublime-*
 
+# Pypi config #
+###############
+.pypirc
+
 # Python pyc files #
 ####################
 *.pyc

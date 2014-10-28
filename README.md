@@ -1,5 +1,5 @@
 Pynion
-=========
+======
 
 A small minion library to build libraries.  
 The **pynion** library provides a series of helper classes to build projects.

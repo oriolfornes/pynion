@@ -12,13 +12,6 @@ Contents
 .. toctree::
    :maxdepth: 3
 
+   install
    quickstart
    api
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
-
