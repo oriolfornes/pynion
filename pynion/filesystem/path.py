@@ -28,6 +28,8 @@ class Path(object):
         self.dname = pathlib.Path(name)
         if self.dname.is_file():
             raise PIF(self.full)
+        if not self.dname.is_dir():
+            self.mkdir()
 
     ##############
     # ATTRIBUTES #

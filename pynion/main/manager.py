@@ -293,7 +293,7 @@ class Manager(object):
             else:
                 sys.stderr.write(line + '\n')
                 traceback.print_tb(sys.exc_info()[2])
-        os._exit(0)
+        os._exit(0)  # This exit avoids atexit calls.
 
     ####################
     # METHODS: AT EXIT #

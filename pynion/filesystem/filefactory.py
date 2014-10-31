@@ -72,15 +72,15 @@ class File(object):
             return
         if action == 'w' or action == 'a':  # WRITE
             if f.is_file():  # Overwrite must be allowed if the file exists
-                if not cls.M.evaluate_overwrite(overwrite):
+                if not m.evaluate_overwrite(overwrite):
                     raise FOE(file_name, action)
-                if not os.access(f.resolve(), os.W_OK):
+                if not os.access(f, os.W_OK):
                     raise FAE(file_name, action)
             else:
-                if not f.resolve().parent.exists():
-                    raise FDN(str(f.resolve()), action)
-                if not os.access(str(f.resolve().parent), os.W_OK):
-                    raise FAE(str(f.resolve().parent), action)
+                if not f.parent.exists():
+                    raise FDN(str(f), action)
+                if not os.access(str(f.parent), os.W_OK):
+                    raise FAE(str(f.parent), action)
         elif action == 'r':  # READ
             if not f.is_file():  # Read a file that does not exist
                 raise FNE(file_name, action)

@@ -2,6 +2,7 @@ from setuptools import setup, find_packages  # Always prefer setuptools over dis
 from os import path
 
 here = path.abspath(path.dirname(__file__))
+version = '0.0.1'
 
 setup(
     name='pynion',
@@ -9,13 +10,14 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='0.0.1',
+    version=version,
 
     description='Python Minion Library',
     long_description=(open('README.md').read()),
 
     # The project's main homepage.
     url='https://bitbucket.org/jaumebonet/pynion',
+    download_url = 'https://bitbucket.org/jaumebonet/pynion/get/{0}.tar.gz'.format(version),
 
     # Author details
     author='Jaume Bonet',
@@ -49,7 +51,6 @@ setup(
     install_requires=['pathlib', 'jsonpickle'],
 
     packages=find_packages(exclude=['docs', 'test']),
-    # packages=['pynion'],
 
     package_data={
         'pynion': ['config/*'],

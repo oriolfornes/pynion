@@ -1,3 +1,4 @@
+import os
 import json
 import pathlib
 
@@ -36,7 +37,10 @@ class BaseFile(object):
         :return: Full path of the file
         :rtype: str
         """
-        return str(self.fname.resolve())
+        try:
+            return str(self.fname.resolve())
+        except:
+            return os.path.abspath(str(self.fname))
 
     @property
     def dir(self):
