@@ -100,6 +100,7 @@ class Manager(object):
         # Create a logger.
         # Null handler is added so that if no handler is active
         # warnings and errors will not display a 'handler not found' message
+        self._stdout = False
         self._fd = logging.getLogger(__name__)
         self._fd.setLevel(logging.DEBUG)
         self._fd.addHandler(logging.NullHandler())
@@ -112,6 +113,9 @@ class Manager(object):
         except:
             self.exception(['Bash command could not be imported.',
                             'System needs to be UNIX based'])
+
+        # Citation Manager
+        self.citations = set()
 
         # Register function to execute at exit
         atexit.register(self.shutdown)
@@ -144,10 +148,12 @@ class Manager(object):
 
     def set_stdout(self):
         """Create a :py:class:`logging.StreamHandler` for standard output."""
+        if self._stdout: return
         handler = logging.StreamHandler()
         handler.setFormatter(self._FRMT)
         self._fd.addHandler(handler)
         self.info('Active STDOUT')
+        self._stdout = True
 
     def set_overwrite(self):
         """Allows overwriting existing files."""
@@ -192,6 +198,14 @@ class Manager(object):
         :param str action: Open mode of the registered file ('r', 'w', 'a')
         """
         self.experiment.add_file(filename, action)
+
+    def add_citation(self, citation):
+        """Adds a new citation from some code or other to be printed at the
+            end of the execution.
+
+        :param str citation: Citation to strore
+        """
+        self.citations.add(citation)
 
     def countdown(self, max_time):
         """Generate a STDERR printed countdown when needed to wait for something.
@@ -315,6 +329,10 @@ class Manager(object):
         self._write_to_pipeline()
 
         info = 'Elapsed time: {0}'.format(self.experiment.duration)
+        if not self._verbose: self.set_verbose()
+        if not self._stdout:  self.set_stdout()
+        for _ in self.citations:
+            self._fd.info('[ REFERENCE!! ]: -- {0}'.format(_))
         self._fd.info('[ SUCCESS!! ]: -- {0}'.format(info))
         self._fd.info('[ SUCCESS!! ]: -- Program ended as expected.')
 
