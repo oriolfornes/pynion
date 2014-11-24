@@ -21,6 +21,9 @@ class Path(object):
     def __init__(self, name):
         """.. py:method:: __init__(name)
 
+        Initializes the Path object. If the directory does not exist, it is
+        created.
+
         :param str name: name of the directory.
         :raise: :py:class:`pynion.errors.pe.PathIsFile` if the given name is
             a file.

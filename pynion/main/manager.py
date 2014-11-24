@@ -113,6 +113,9 @@ class Manager(object):
             self.exception(['Bash command could not be imported.',
                             'System needs to be UNIX based'])
 
+        # Citation Manager
+        self.citations = set()
+
         # Register function to execute at exit
         atexit.register(self.shutdown)
         atexit.register(self.cleanup)
@@ -192,6 +195,14 @@ class Manager(object):
         :param str action: Open mode of the registered file ('r', 'w', 'a')
         """
         self.experiment.add_file(filename, action)
+
+    def add_citation(self, citation):
+        """Adds a new citation from some code or other to be printed at the
+            end of the execution.
+
+        :param str citation: Citation to strore
+        """
+        self.citations.add(citation)
 
     def countdown(self, max_time):
         """Generate a STDERR printed countdown when needed to wait for something.
@@ -315,6 +326,8 @@ class Manager(object):
         self._write_to_pipeline()
 
         info = 'Elapsed time: {0}'.format(self.experiment.duration)
+        for _ in self.citations:
+            self._fd.info('[ REFERENCE!! ]: -- {0}'.format(_))
         self._fd.info('[ SUCCESS!! ]: -- {0}'.format(info))
         self._fd.info('[ SUCCESS!! ]: -- Program ended as expected.')
 
