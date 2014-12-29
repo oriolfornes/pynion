@@ -1,3 +1,4 @@
+import os
 import pathlib
 import shutil
 
@@ -243,6 +244,8 @@ class Path(object):
     ####################
     @staticmethod
     def _copy(source, destination, by_file):
+        if os.path.exists(str(destination)):
+            return
         m.debug('Copy {0} to {1}'.format(str(source), str(destination)))
         if not by_file:
             shutil.copytree(str(source), str(destination))
