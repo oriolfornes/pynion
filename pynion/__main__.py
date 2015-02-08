@@ -17,7 +17,7 @@ def options(*args, **kwds):
                                      formatter_class = argparse.ArgumentDefaultsHelpFormatter,
                                      description     = 'A library building minion')
 
-    parser.add_argument('-p', '--project',   dest     = "project",
+    parser.add_argument('-p', '--project',      dest     = "project",
                         action  = "store",      required = True,
                         help    = "Project name")
 

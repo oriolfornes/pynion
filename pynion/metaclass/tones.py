@@ -25,7 +25,7 @@ class Singleton(type):
     instance = {}
 
     def __call__(cls, *args, **kw):
-        if not cls in cls.instance:
+        if cls not in cls.instance:
             cls.instance[cls] = super(Singleton, cls).__call__(*args, **kw)
         return cls.instance[cls]
 
@@ -71,8 +71,8 @@ class Multiton(type):
         elif len(args) > 0:    ident = args[0]
         else:                  raise BMI([idkey, cls.__name__])
 
-        if not cls in cls.instance:
+        if cls not in cls.instance:
             cls.instance.setdefault(cls, {})
-        if not ident in cls.instance[cls]:
+        if ident not in cls.instance[cls]:
             cls.instance[cls][ident] = super(Multiton, cls).__call__(*args, **kw)
         return cls.instance[cls][ident]

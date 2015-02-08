@@ -51,10 +51,11 @@ class Experiment(JSONer):
         self.duration = str(datetime.timedelta(seconds=self.duration))
 
     def clean_empty_files(self):
-        for efile in self.files['w']:
-            if os.path.isfile(efile) and os.path.getsize(efile) == 0:
-                os.unlink(efile)
-                yield efile
+        if 'w' in self.files:
+            for efile in self.files['w']:
+                if os.path.isfile(efile) and os.path.getsize(efile) == 0:
+                    os.unlink(efile)
+                    yield efile
 
     ####################
     # METHODS: PRIVATE #

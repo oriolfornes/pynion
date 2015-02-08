@@ -175,8 +175,7 @@ class Manager(object):
             logname     = os.path.join(logname, log_file)
 
         self.info('LOGfile: {0}'.format(logname))
-        handler = logging.FileHandler(filename = logname,
-                                      encoding = 'utf8')
+        handler = logging.FileHandler(filename = logname)
         handler.setFormatter(self._FRMT)
         self._fd.addHandler(handler)
 

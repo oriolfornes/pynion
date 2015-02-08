@@ -2,7 +2,7 @@ from setuptools import setup, find_packages  # Always prefer setuptools over dis
 from os import path
 
 here = path.abspath(path.dirname(__file__))
-version = '0.0.1'
+version = '0.0.2'
 
 setup(
     name='pynion',
