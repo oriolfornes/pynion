@@ -4,8 +4,7 @@ their classes by adding a certain build behavior to the derived classes.
 .. moduleauthor:: Jaume Bonet <jaume.bonet@gmail.com>
 
 """
-
-__all__ = ["Singleton", "Multiton"]
-
 from .tones import Singleton
 from .tones import Multiton
+
+__all__ = ["Singleton", "Multiton"]

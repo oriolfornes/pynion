@@ -1,4 +1,4 @@
-#FileErrors
+# FileErrors
 
 
 class FileError(Exception):

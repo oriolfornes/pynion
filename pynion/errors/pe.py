@@ -1,4 +1,4 @@
-#PathErrors
+# PathErrors
 
 
 class PathError(Exception):
