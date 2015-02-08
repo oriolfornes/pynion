@@ -1,8 +1,13 @@
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
 from os import path
+import pynion
 
 here = path.abspath(path.dirname(__file__))
-version = '0.0.2'
+version = pynion.__version__
+
+
+def read(fname):
+    return open(path.join(path.dirname(__file__), fname)).read()
 
 setup(
     name='pynion',
@@ -13,7 +18,7 @@ setup(
     version=version,
 
     description='Python Minion Library',
-    long_description=(open('README.md').read()),
+    # long_description=read('README.md'),
 
     # The project's main homepage.
     url='https://bitbucket.org/jaumebonet/pynion',
@@ -45,7 +50,7 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
 
-    platform='UNIX',
+    platforms='UNIX',
     keywords='development',
 
     install_requires=['pathlib', 'jsonpickle'],
