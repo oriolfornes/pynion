@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
 from os import path
-import pynion
+from pynion import __version__ as version
 
-here = path.abspath(path.dirname(__file__))
-version = pynion.__version__
+here    = path.abspath(path.dirname(__file__))
 
 
 def read(fname):

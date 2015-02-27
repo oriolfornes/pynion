@@ -20,7 +20,7 @@ class BaseFile(object):
     """
     __metaclass__ = Multiton
 
-    _IDENTIFIER   = 'name'
+    _IDENTIFIER   = 'file_name'
 
     def __init__(self, file_name, action):
         self.fname    = pathlib.Path(file_name)
@@ -112,7 +112,7 @@ class BaseFile(object):
         :return: File size
         :rtype: str
         """
-        return self.name.stat().st_size
+        return self.fname.stat().st_size
 
     @property
     def pattern(self):
@@ -255,6 +255,4 @@ class BaseFile(object):
         return self.full
 
     def __repr__(self):
-        cls = '.'.join([self.__class__.split('.')[0],
-                        self.__class__.split('.')[-1]])
-        return '<{0}: {1.full}>'.format(cls, self)
+        return '<{0}: {1.full}>'.format(self.__class__.__name__, self)

@@ -230,11 +230,11 @@ class Manager(object):
                 sys.stderr.write('Remaining: {0} hours'.format(t))
                 sys.stderr.write('\n')
 
-    def evaluate_overwrite(self, overwrite):
+    def evaluate_overwrite(self, overwrite = None):
         """Given a overwrite command, it evaluates it with the global
         overwrite configuration.
 
-        :param bool overwrite: Particular overwrite status.
+        :param bool overwrite: Particular overwrite status. Default is :py:data:`None`
         :return: Final overwrite status
         :rtype: bool
         """

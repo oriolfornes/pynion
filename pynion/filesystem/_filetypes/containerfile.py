@@ -68,9 +68,8 @@ class ContainerFile(BaseFile):
         Open the file in the previously defined action type.
         :rtype: self
         """
-        if self._is_open:
+        if self.is_open:
             return self
-        self._is_open = True
         if self.is_tarfile:
             self._fd = tarfile.open(self.full)
         if self.is_zipped:
