@@ -92,8 +92,8 @@ class Path(object):
         if self.dname.is_dir():
             m.warning('The directory {0} already exists.'.format(self.full))
         else:
-            m.info('Creating directory {0}'.format(self.full))
             self.dname.mkdir(parents = True)
+            m.info('Creating directory {0}'.format(self.full))
 
     def list_directories(self, rootless = False):
         """

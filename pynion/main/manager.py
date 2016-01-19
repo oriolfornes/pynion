@@ -179,6 +179,21 @@ class Manager(object):
         handler.setFormatter(self._FRMT)
         self._fd.addHandler(handler)
 
+    ############
+    # BOOLEANS #
+    ############
+    def is_verbose(self):
+        """Assess the status of the *verbose* logging level"""
+        return self._verbose
+
+    def is_debug(self):
+        """Assess the status of the *debug* logging level"""
+        return self._debug
+
+    def is_detail(self):
+        """Assess the status of the *detail* logging level"""
+        return self._detail
+
     ###########
     # METHODS #
     ###########
@@ -230,11 +245,11 @@ class Manager(object):
                 sys.stderr.write('Remaining: {0} hours'.format(t))
                 sys.stderr.write('\n')
 
-    def evaluate_overwrite(self, overwrite):
+    def evaluate_overwrite(self, overwrite = None):
         """Given a overwrite command, it evaluates it with the global
         overwrite configuration.
 
-        :param bool overwrite: Particular overwrite status.
+        :param bool overwrite: Particular overwrite status. Default is :py:data:`None`
         :return: Final overwrite status
         :rtype: bool
         """
