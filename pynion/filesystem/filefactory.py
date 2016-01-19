@@ -74,7 +74,7 @@ class File(object):
             if f.is_file():  # Overwrite must be allowed if the file exists
                 if not m.evaluate_overwrite(overwrite):
                     raise FOE(file_name, action)
-                if not os.access(f, os.W_OK):
+                if not os.access(str(f), os.W_OK):
                     raise FAE(file_name, action)
             else:
                 if not f.parent.exists():

@@ -179,6 +179,21 @@ class Manager(object):
         handler.setFormatter(self._FRMT)
         self._fd.addHandler(handler)
 
+    ############
+    # BOOLEANS #
+    ############
+    def is_verbose(self):
+        """Assess the status of the *verbose* logging level"""
+        return self._verbose
+
+    def is_debug(self):
+        """Assess the status of the *debug* logging level"""
+        return self._debug
+
+    def is_detail(self):
+        """Assess the status of the *detail* logging level"""
+        return self._detail
+
     ###########
     # METHODS #
     ###########
