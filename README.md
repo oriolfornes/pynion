@@ -18,8 +18,8 @@ as well as for the automatic detection of compressed file types.
 
 *The ``Manager`` class takes care of:
 
-    *  *Logging depth*  
-    *  *Overwrite control*  
-    *  *Clean up of temporal and empty files*  
+*  *Logging depth*  
+*  *Overwrite control*  
+*  *Clean up of temporal and empty files*  
 
 Find more about how to use the library in the [documentation](https://pynion.readthedocs.org/en/latest/).
