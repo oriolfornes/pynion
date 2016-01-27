@@ -1,12 +1,5 @@
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
-from os import path
-from pynion.__version__ import __version__ as version
-
-here    = path.abspath(path.dirname(__file__))
-
-
-def read(fname):
-    return open(path.join(path.dirname(__file__), fname)).read()
+__version__ = '0.0.4'
 
 setup(
     name='pynion',
@@ -14,14 +7,14 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version=version,
+    version=__version__,
 
     description='Python Minion Library',
     # long_description=read('README.md'),
 
     # The project's main homepage.
     url='https://github.com/jaumebonet/pynion',
-    download_url = 'https://github.com/jaumebonet/pynion/archive/{0}.tar.gz'.format(version),
+    download_url = 'https://github.com/jaumebonet/pynion/archive/{0}.tar.gz'.format(__version__),
 
     # Author details
     author='Jaume Bonet',
