@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
 from os import path
-from pynion import __version__ as version
+from pynion.__version__ import __version__ as version
 
 here    = path.abspath(path.dirname(__file__))
 
