@@ -14,7 +14,7 @@ from .abstractclass import *
 from .main          import *
 from .filesystem    import *
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 __all__ = []
 __all__.extend(metaclass.__all__)

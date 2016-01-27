@@ -20,8 +20,8 @@ setup(
     # long_description=read('README.md'),
 
     # The project's main homepage.
-    url='https://bitbucket.org/jaumebonet/pynion',
-    download_url = 'https://bitbucket.org/jaumebonet/pynion/get/{0}.tar.gz'.format(version),
+    url='https://github.com/jaumebonet/pynion',
+    download_url = 'https://github.com/jaumebonet/pynion/archive/{0}.tar.gz'.format(version),
 
     # Author details
     author='Jaume Bonet',
