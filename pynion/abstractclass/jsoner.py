@@ -80,8 +80,8 @@ class JSONer(object):
         """
         return json.loads(self.to_json(unpicklable, readable, api))
 
-    @staticmethod
-    def from_json(json_data):
+    @classmethod
+    def from_json(cls, json_data):
         """Given a json-formated string, it recreates the object.
 
         :param str json_data: json-formated string.
@@ -90,3 +90,14 @@ class JSONer(object):
 
         """
         return jsonpickle.decode(json_data)
+
+    @classmethod
+    def from_dict(cls, json_dict):
+        """Given a json dictionary, it recreates the object.
+
+        :param dict json_dict: json dictionary.
+        :return: an instance of the caller object type.
+        :rtype: :py:data:`object instance`
+
+        """
+        return cls.from_json(json.dumps(json_dict))
