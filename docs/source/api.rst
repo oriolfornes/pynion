@@ -76,4 +76,16 @@ JSONer
 ++++++
 
 .. autoclass:: pynion.JSONer
-   :members: to_json, to_dict, from_json, from_dict
+   :members:
+
+Decorators
+---------------
+
+.. automodule:: pynion.decorators
+
+extendable
+++++++++++
+
+.. autofunction:: pynion.extendable
+
+
