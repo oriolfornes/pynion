@@ -202,6 +202,8 @@ class BaseFile(object):
         """
         Retrieve all data in file as a JSON dictionary.
 
+        :param str encoding: Encoding read format (default: utf-8)
+
         :raise: :py:class:`pynion.errors.fe.FileWrongRequestedActionError` if
             opened in write mode.
         :rtype: dict
@@ -212,15 +214,23 @@ class BaseFile(object):
             d.append(l.strip())
         return json.loads(''.join(d), encoding=encoding)
 
-    def write(self, line):
+    def write(self, line, encoding = None):
         """
         Write to the file
+
+        :param str line: Content to write
+        :param str encoding: Encoding format (use utf-8, for example, if needs
+            to print greek characters)
+
 
         :raise: :py:class:`pynion.errors.fe.FileWrongRequestedActionError` if
             opened in read mode.
         """
         self._check_action('w')
-        self._fd.write(line)
+        if encoding is None:
+            self._fd.write(line)
+        else:
+            self._fd.write(line.encode(encoding))
 
     def flush(self):
         """
