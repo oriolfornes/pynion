@@ -16,6 +16,7 @@ class BaseFile(object):
     created directly through the py:class:`pynion.File` factory.
 
     It specifically manages regular files.
+    Allows the with statement in read files.
 
     """
     __metaclass__ = Multiton
@@ -257,6 +258,13 @@ class BaseFile(object):
             raise FWR(self.full, self.action)
         elif call_method == 'w' and self.is_to_read:
             raise FWR(self.full, self.action)
+
+    def __enter__(self):
+        self.open()
+        return self.read()
+
+    def __exit__(self, type, value, traceback):
+        self.close()
 
     #################
     # MAGIC METHODS #

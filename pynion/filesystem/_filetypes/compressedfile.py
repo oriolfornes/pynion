@@ -12,6 +12,7 @@ class CompressedFile(BaseFile):
     Extends :py:class:`pynion.filesystem._filetypes.BaseFile`
 
     It specifically manages compressed files.
+    Allows the with statement in read files.
 
     """
 

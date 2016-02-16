@@ -139,3 +139,9 @@ class ContainerFile(BaseFile):
         :rtype: int
         """
         return len(self.list_files)
+
+    def __new__(self):
+        raise NotImplementedError
+
+    def __exit__(self, type, value, traceback):
+        raise NotImplementedError
