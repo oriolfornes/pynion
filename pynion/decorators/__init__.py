@@ -7,7 +7,7 @@
 # @date:   2016-01-29 17:03:38
 #
 # @last modified by:   jaumebonet
-# @last modified time: 2016-01-29 17:09:27
+# @last modified time: 2016-02-16 19:25:12
 #
 # -*-
 """Decorators in **pynion** are designed in order to provide extra functionality
@@ -17,5 +17,6 @@
 
 """
 from .extendable import extendable
+from .accepts    import accepts
 
-__all__ = ["extendable"]
+__all__ = ["extendable", "accepts"]

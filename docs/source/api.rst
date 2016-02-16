@@ -88,4 +88,9 @@ extendable
 
 .. autofunction:: pynion.extendable
 
+accepts
+++++++++++
+
+.. autofunction:: pynion.accepts
+
 

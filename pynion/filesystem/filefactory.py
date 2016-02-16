@@ -115,8 +115,6 @@ class File(object):
             pparts = pattern.split('.')
             if len(pparts) > len(fparts):
                 raise WPF(file_name, pattern)
-            classdefined = dir(newfile)
-            print classdefined
             for i in range(len(pparts)):
                 if pparts[i] not in classdefined:
                     newfile.__dict__[pparts[i]] = fparts[i]
