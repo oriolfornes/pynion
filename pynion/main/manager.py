@@ -8,7 +8,7 @@
 
 """
 import atexit
-import ConfigParser
+#import ConfigParser
 import datetime
 import inspect
 import json
@@ -18,6 +18,12 @@ import sys
 import time
 import traceback
 import warnings
+
+# Python version-specific modules
+if sys.version_info[0] == 3:
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 
 from ..metaclass  import Singleton
 from ._inner      import Project
