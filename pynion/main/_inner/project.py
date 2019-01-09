@@ -16,9 +16,7 @@ import shutil
 from ...metaclass import Singleton
 
 
-class Project(object):
-    __metaclass__  = Singleton
-
+class Project(object, metaclass=Singleton):
     def __init__(self, project_file, config_file, pipeline_file):
         # Default Project Conditions:
         self.name           = None

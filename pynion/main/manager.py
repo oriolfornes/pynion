@@ -21,22 +21,20 @@ import warnings
 
 # Python version-specific modules
 if sys.version_info[0] == 3:
-    import configparser as ConfigParser
-    basestring = str
+    import configparser
 else:
-    import ConfigParser
+    import ConfigParser as configparser
 
 from ..metaclass  import Singleton
 from ._inner      import Project
 from ._inner      import Experiment
 
 
-class Manager(object):
+class Manager(object, metaclass=Singleton):
     """The Manager class is a :py:class:`Singleton <pynion.Singleton>` that crosses
     through the entire library. It is the main controller of the user's preferences.
 
     """
-    __metaclass__ = Singleton
 
     _GENERAL_FORMAT = '%(asctime)s - %(levelname)-7.7s - %(message)s'
     _TIME_FORMAT    = '%Y-%m-%d %H:%M'
@@ -374,7 +372,7 @@ class Manager(object):
         return callerID.upper()
 
     def _message_to_array(self, callerID, mssg):
-        if isinstance(mssg, basestring):
+        if isinstance(mssg, str):
             mssg = [mssg, ]
         for line in mssg:
             yield self._MSSG.format(callerID, str(line))
@@ -399,7 +397,7 @@ class Manager(object):
         user    = os.path.normpath(user)
         user    = os.getenv('PYNION_CONFIG_PY', user)
 
-        parse  = ConfigParser.RawConfigParser(allow_no_value=True)
+        parse  = configparser.RawConfigParser(allow_no_value=True)
         parse.readfp(open(default))
         parse.read(user)
 

@@ -3,10 +3,6 @@ import pathlib
 import shutil
 import sys
 
-# Python version-specific modules
-if sys.version_info[0] == 3:
-    basestring = str
-
 from ..          import Multiton
 from ..          import Manager
 from ..errors.pe import PathIsFile as PIF
@@ -14,13 +10,12 @@ from ..errors.pe import PathIsFile as PIF
 m = Manager()
 
 
-class Path(object):
+class Path(object, metaclass=Multiton):
     """
     The **Path** :py:class:`pynion.Multiton` is an extension (not an actual inheritance) from the
     :py:class:`pathlib.Path`.
 
     """
-    __metaclass__ = Multiton
 
     _IDENTIFIER   = 'name'
 
@@ -260,7 +255,7 @@ class Path(object):
             shutil.copyfile(str(source), str(destination))
 
     def _prepare_comparisson(self, other, by_file):
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             other  = Path(other)
         elif isinstance(other, pathlib.Path):
             other  = Path(str(other.resolve()))

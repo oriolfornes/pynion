@@ -7,9 +7,7 @@ from .. import Singleton
 # https://github.com/hpk42/numpyson/blob/master/numpyson.py
 
 
-class NPReadable(object):
-    __metaclass__ = Singleton
-
+class NPReadable(object, metaclass=Singleton):
     def __init__(self):
         self.status = False
         self.api    = False

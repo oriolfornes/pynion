@@ -10,7 +10,7 @@ from ...errors.fe import FileWrongRequestedActionError as FWR
 m = Manager()
 
 
-class BaseFile(object):
+class BaseFile(object, metaclass=Multiton):
     """
     The **BaseFile** :py:class:`pynion.Multiton` is a file management object
     created directly through the py:class:`pynion.File` factory.
@@ -19,7 +19,6 @@ class BaseFile(object):
     Allows the with statement in read files.
 
     """
-    __metaclass__ = Multiton
 
     _IDENTIFIER   = 'file_name'
 

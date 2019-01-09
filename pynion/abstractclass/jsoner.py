@@ -12,14 +12,13 @@ except:
     np_readable = None
 
 
-class JSONer(object):
+class JSONer(object, metaclass=ABCMeta):
     """The abstract class **JSONer** adds to its descendants the required
     functions in order to export/import any given object as json. This can be
     useful to share the data between different languages or simply to store
     pre-calculated data.
 
     """
-    __metaclass__ = ABCMeta
 
     def to_json(self, unpicklable = True, readable = False, api = False):
         """Export the object to a json formated string.

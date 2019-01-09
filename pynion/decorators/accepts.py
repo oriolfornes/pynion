@@ -53,9 +53,9 @@ def accepts(**types):
     def check_accepts(f):
         def new_f(*args, **kwds):
             for i, v in enumerate(args):
-                kwds[f.func_code.co_varnames[i]] = v
+                kwds[f.__code__.co_varnames[i]] = v
             args = []
-            for k, v in kwds.iteritems():
+            for k, v in list(kwds.items()):
                 if k not in types: continue
                 if not isinstance(types[k], str) and not isinstance(v, types[k]):
                     raise ParameterTypeError(k, types[k])
@@ -76,6 +76,6 @@ def accepts(**types):
             for nonparam in ignored:
                 m.warning("specified parameter {0} not in function".format(nonparam))
             return f(*args, **kwds)
-        new_f.func_name = f.func_name
+        new_f.__name__ = f.__name__
         return new_f
     return check_accepts
