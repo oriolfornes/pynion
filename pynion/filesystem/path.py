@@ -1,6 +1,11 @@
 import os
 import pathlib
 import shutil
+import sys
+
+# Python version-specific modules
+if sys.version_info[0] == 3:
+    basestring = str
 
 from ..          import Multiton
 from ..          import Manager

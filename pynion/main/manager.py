@@ -22,6 +22,7 @@ import warnings
 # Python version-specific modules
 if sys.version_info[0] == 3:
     import configparser as ConfigParser
+    basestring = str
 else:
     import ConfigParser
 
